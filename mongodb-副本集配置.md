@@ -49,19 +49,19 @@
 
 ### 初始化副本集配置
     
-    >rs.initiate(config)
+    > rs.initiate(config)
 
 ### 查看集群节点的状态 
 
-    >rs.status()
+    > rs.status()
 
 ### 添加副本，在登录到主节点下输入
     
-    >rs.add("ip:port")
+    > rs.add("ip:port")
 
 ### 删除副本 
     
-    >rs.remove("ip:port")
+    > rs.remove("ip:port")
     
     
 ## 4. 设置SECONDARY为可读
@@ -92,6 +92,10 @@ StackOverflow中描述如下：
 >* Create a file named replStart.js, containing one line: rs.slaveOk()
    Then include --shell replStart.js when you launch the Mongo shell. Of course, 
    if you're connecting locally to a single instance, this doesn't save any typing.
+   
+   
+## 5. 测试副本集的故障转移功能
+kill主节点后，其他副本集会进行投票选举一个新的主节点，当原来的主节点的重新恢复后，会变成SECONDARY
 
 
 
