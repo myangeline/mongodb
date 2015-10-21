@@ -128,10 +128,111 @@ shard3: 22003
     
     > db.runCommand( { shardcollection : "testdb.table1",key : {id: 1} } )
 我们设置testdb的 table1 表需要分片，根据 id 自动分片到 shard1 ，shard2，shard3 上面去。要这样设置是因为不是所有mongodb 的数据库和表 都需要分片
-这里片键的指定基本上是根据id递增的，这样的片键可能会导致数据的不均衡分配，片键还可以指定为hash
+这里片键的指定基本上是根据id递增的，这样的片键可能会导致数据的不均衡分配，一般会是先在第一个分片中，等到数量很多以后会自动分配到其他分片。
+片键还可以指定为hash
     
     > db.runCommand({shardcollection:"test.table",key:{_id: "hashed"}})
 这样的hash片键会根据 `_id` 的hash值来均匀分配到每个分片上
+
+
+查看集合中数据的分配情况（下面使用了hash片键，所以每个分片中数据分配很均匀）
+
+    > db.table.stats()
+    
+    {
+        "sharded" : true,
+        "paddingFactorNote" : "paddingFactor is unused and unmaintained in 3.0. It remains hard coded to 1.0 for compatibility only.",
+        "userFlags" : 1,
+        "capped" : false,
+        "ns" : "test.table",
+        "count" : 100000,
+        "numExtents" : 18,
+        "size" : 11200000,
+        "storageSize" : 33546240,
+        "totalIndexSize" : 8192352,
+        "indexSizes" : {
+            "_id_" : 3262224,
+            "_id_hashed" : 4930128
+        },
+        "avgObjSize" : 112,
+        "nindexes" : 2,
+        "nchunks" : 3,
+        "shards" : {
+            "shard1" : {
+                "ns" : "test.table",
+                "count" : 33395,
+                "size" : 3740240,
+                "avgObjSize" : 112,
+                "numExtents" : 6,
+                "storageSize" : 11182080,
+                "lastExtentSize" : 8388608,
+                "paddingFactor" : 1,
+                "paddingFactorNote" : "paddingFactor is unused and unmaintained in 3.0. It remains hard coded to 1.0 for compatibility only.",
+                "userFlags" : 1,
+                "capped" : false,
+                "nindexes" : 2,
+                "totalIndexSize" : 2714432,
+                "indexSizes" : {
+                    "_id_" : 1087408,
+                    "_id_hashed" : 1627024
+                },
+                "ok" : 1,
+                "$gleStats" : {
+                    "lastOpTime" : Timestamp(0, 0),
+                    "electionId" : ObjectId("5626f0329f74d56c88b98ad8")
+                }
+            },
+            "shard2" : {
+                "ns" : "test.table",
+                "count" : 33399,
+                "size" : 3740688,
+                "avgObjSize" : 112,
+                "numExtents" : 6,
+                "storageSize" : 11182080,
+                "lastExtentSize" : 8388608,
+                "paddingFactor" : 1,
+                "paddingFactorNote" : "paddingFactor is unused and unmaintained in 3.0. It remains hard coded to 1.0 for compatibility only.",
+                "userFlags" : 1,
+                "capped" : false,
+                "nindexes" : 2,
+                "totalIndexSize" : 2730784,
+                "indexSizes" : {
+                    "_id_" : 1087408,
+                    "_id_hashed" : 1643376
+                },
+                "ok" : 1,
+                "$gleStats" : {
+                    "lastOpTime" : Timestamp(0, 0),
+                    "electionId" : ObjectId("5626f1a4e1a78b7b4ba4af9b")
+                }
+            },
+            "shard3" : {
+                "ns" : "test.table",
+                "count" : 33206,
+                "size" : 3719072,
+                "avgObjSize" : 112,
+                "numExtents" : 6,
+                "storageSize" : 11182080,
+                "lastExtentSize" : 8388608,
+                "paddingFactor" : 1,
+                "paddingFactorNote" : "paddingFactor is unused and unmaintained in 3.0. It remains hard coded to 1.0 for compatibility only.",
+                "userFlags" : 1,
+                "capped" : false,
+                "nindexes" : 2,
+                "totalIndexSize" : 2747136,
+                "indexSizes" : {
+                    "_id_" : 1087408,
+                    "_id_hashed" : 1659728
+                },
+                "ok" : 1,
+                "$gleStats" : {
+                    "lastOpTime" : Timestamp(0, 0),
+                    "electionId" : ObjectId("5626f197abea9e18fce59dda")
+                }
+            }
+        },
+        "ok" : 1
+    }
 
 
 到此一个mongodb的分片配置基本上完成
