@@ -12,7 +12,7 @@
     2015-10-21T09:39:04.599+0800 I STORAGE  [initandlisten] exception in initAndListen: 12596 old lock file, terminating
     2015-10-21T09:39:04.599+0800 I CONTROL  [initandlisten] dbexit:  rc: 100
     
-如果是这样的话，那是因为mongod.lock文件没有删除的原因，直接去删掉即可 `rm mongod.lock`
+如果是这样的话，那是因为mongod.lock文件没有删除的原因，直接去删掉即可 `rm mongod.lock`。
 出现这个问题不止这一个原因，可能还有journal文件太大存储空间不足导致的，可以选择关闭也可以解决问题，设置 `nojournal = true`即可
 
 
